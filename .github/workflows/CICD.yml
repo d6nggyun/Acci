@@ -43,6 +43,7 @@ jobs:
   cd:
     runs-on: ubuntu-latest
     name: Deploy to EC2
+    needs: ci
 
     steps:
       - name: Checkout code
