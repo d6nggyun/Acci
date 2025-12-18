@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import refresh.acci.domain.user.infra.UserRepository;
-import refresh.acci.domain.user.model.CustomOAuth2User;
+import refresh.acci.domain.user.model.CustomOAuthUser;
 import refresh.acci.domain.user.model.User;
 import refresh.acci.global.security.oauth.OAuthResponseFactory;
 import refresh.acci.global.security.oauth.attributes.OAuthAttributes;
@@ -38,7 +38,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         User user = saveOrUpdate(oauthAttributes);
 
-        return new CustomOAuth2User(user, attributes);
+        return new CustomOAuthUser(user, attributes);
     }
 
     private User saveOrUpdate(OAuthAttributes attributes) {
