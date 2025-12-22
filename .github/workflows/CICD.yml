@@ -77,6 +77,15 @@ jobs:
               -e "MYSQL_URL=${{ secrets.MYSQL_URL }}" \
               -e "MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}" \
               -e "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" \
+              -e "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" \
+              -e "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" \
+              -e "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" \
+              -e "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" \
+              -e "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" \
+              -e "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" \
+              -e "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" \
+              -e "BACKEND_URL=${{ secrets.BACKEND_URL }}" \
+              -e "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" \
               -p "8080:8080" \
               "$IMAGE"
 
