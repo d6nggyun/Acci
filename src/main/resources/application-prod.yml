@@ -18,6 +18,11 @@ spring:
         jdbc:
           time_zone: Asia/Seoul
 
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+
 security:
   oauth2:
     client:
