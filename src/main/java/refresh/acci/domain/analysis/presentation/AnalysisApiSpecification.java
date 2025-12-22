@@ -5,12 +5,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import refresh.acci.domain.analysis.presentation.dto.req.AnalysisUploadRequest;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 import refresh.acci.domain.analysis.presentation.dto.res.AnalysisResultResponse;
 import refresh.acci.domain.analysis.presentation.dto.res.AnalysisUploadResponse;
 
@@ -27,7 +26,7 @@ public interface AnalysisApiSpecification {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = AnalysisUploadResponse.class)))
     })
-    ResponseEntity<AnalysisUploadResponse> analyze(@Valid @RequestBody AnalysisUploadRequest request);
+    ResponseEntity<AnalysisUploadResponse> analyze(@RequestPart("video") MultipartFile file);
 
     ResponseEntity<String> getLoadingVideo(@RequestParam LocalDate todayDate);
 
