@@ -1,4 +1,20 @@
 package refresh.acci.domain.analysis.presentation.dto.res;
 
-public record AnalysisUploadResponse() {
+import refresh.acci.domain.analysis.model.enums.AnalysisStatus;
+import refresh.acci.domain.analysis.model.Analysis;
+
+import java.util.UUID;
+
+public record AnalysisUploadResponse(
+
+        UUID analysisId,
+
+        AnalysisStatus analysisStatus,
+
+        boolean isCompleted
+
+) {
+    public static AnalysisUploadResponse of(Analysis analysis) {
+        return new AnalysisUploadResponse(analysis.getId(), analysis.getAnalysisStatus(), analysis.isCompleted());
+    }
 }

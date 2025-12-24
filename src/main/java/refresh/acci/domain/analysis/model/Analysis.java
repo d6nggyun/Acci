@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
-import refresh.acci.domain.analysis.model.enums.AccidentStatus;
+import refresh.acci.domain.analysis.model.enums.AnalysisStatus;
 import refresh.acci.domain.analysis.model.enums.AccidentType;
 
 import java.util.UUID;
@@ -34,29 +34,29 @@ public class Analysis {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "accident_status")
-    private AccidentStatus accidentStatus;
+    private AnalysisStatus analysisStatus;
 
     @Column(name = "is_completed", nullable = false)
     private boolean isCompleted = false;
 
-    private Analysis(Long userId, AccidentStatus accidentStatus) {
+    private Analysis(Long userId, AnalysisStatus analysisStatus) {
         this.userId = userId;
-        this.accidentStatus = accidentStatus;
+        this.analysisStatus = analysisStatus;
     }
 
     public static Analysis of(Long userId) {
-        return new Analysis(userId, AccidentStatus.PROCESSING);
+        return new Analysis(userId, AnalysisStatus.PROCESSING);
     }
 
     public void completeAnalysis(Long accidentRate, AccidentType accidentType) {
         this.accidentRate = accidentRate;
         this.accidentType = accidentType;
-        this.accidentStatus = AccidentStatus.COMPLETED;
+        this.analysisStatus = AnalysisStatus.COMPLETED;
         this.isCompleted = true;
     }
 
     public void failAnalysis() {
-        this.accidentStatus = AccidentStatus.FAILED;
+        this.analysisStatus = AnalysisStatus.FAILED;
         this.isCompleted = true;
     }
 }
