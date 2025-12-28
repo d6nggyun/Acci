@@ -24,7 +24,7 @@ public class KakaoOAuthAttributes implements OAuthAttributes {
                 .provider("kakao")
                 .providerId(String.valueOf(attributes.get("id")))
                 .name((String) profile.get("nickname"))
-                .email((String) profile.get("email"))
+                .email((String) kakaoAccount.get("email"))
                 .profileImage((String) profile.get("profile_image_url"))
                 .build();
     }
