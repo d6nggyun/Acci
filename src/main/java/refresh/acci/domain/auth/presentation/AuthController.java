@@ -16,7 +16,7 @@ import refresh.acci.domain.user.model.CustomUserDetails;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
-public class AuthController {
+public class AuthController implements AuthApiSpecification{
 
     private final AuthService authService;
 
