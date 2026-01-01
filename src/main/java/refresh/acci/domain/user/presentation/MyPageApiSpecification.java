@@ -1,0 +1,66 @@
+package refresh.acci.domain.user.presentation;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import refresh.acci.domain.user.model.CustomUserDetails;
+import refresh.acci.domain.user.presentation.dto.MyPageResponse;
+import refresh.acci.global.exception.ErrorResponseEntity;
+
+@Tag(name = "User (사용자)", description = "User (사용자) 관련 API")
+public interface MyPageApiSpecification {
+
+    @Operation(
+            summary = "내 정보 조회",
+            description = "현재 로그인한 사용자의 프로필 정보를 조회합니다. <br><br>" +
+                    "이 API는 인증이 필요하며, Authorization 헤더에 유효한 Access Token을 포함해야 합니다. <br><br>" +
+                    "사용자의 이름, 이메일, 프로필 이미지, 권한 정보를 반환합니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "내 정보 조회 성공",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = MyPageResponse.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "name": "홍길동",
+                                                "email": "hong@example.com",
+                                                "profileImage": "https://example.com/profile.jpg",
+                                                "role": "USER"
+                                            }
+                                            """))),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "인증되지 않은 사용자",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseEntity.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "code": 401,
+                                                "name": "JWT_ENTRY_POINT",
+                                                "message": "인증되지 않은 사용자입니다.",
+                                                "errors": null
+                                            }
+                                            """))),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "사용자 정보를 찾을 수 없음",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseEntity.class),
+                                    examples = @ExampleObject(value = """
+                                            {
+                                                "code": 401,
+                                                "name": "USER_NOT_FOUND",
+                                                "message": "인증된 사용자 정보를 찾을 수 없습니다.",
+                                                "errors": null
+                                            }
+                                            """)))
+            })
+    ResponseEntity<MyPageResponse> getMyPage(@AuthenticationPrincipal CustomUserDetails userDetails);
+}

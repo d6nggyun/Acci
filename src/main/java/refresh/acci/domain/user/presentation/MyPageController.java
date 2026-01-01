@@ -13,10 +13,11 @@ import refresh.acci.domain.user.application.MyPageService;
 import refresh.acci.domain.user.model.CustomUserDetails;
 import refresh.acci.domain.user.presentation.dto.MyPageResponse;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users/me")
-public class MyPageController {
+public class MyPageController implements MyPageApiSpecification{
     private final MyPageService myPageService;
 
     @GetMapping
