@@ -1,7 +1,6 @@
 package refresh.acci.domain.auth.infra;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import refresh.acci.domain.auth.model.AuthCode;
 
