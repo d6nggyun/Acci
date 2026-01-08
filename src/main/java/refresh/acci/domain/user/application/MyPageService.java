@@ -22,6 +22,7 @@ public class MyPageService {
 
     public MyPageResponse getMyPage(Long userId) {
         User user = findUserById(userId);
+
         return MyPageResponse.of(user);
     }
 

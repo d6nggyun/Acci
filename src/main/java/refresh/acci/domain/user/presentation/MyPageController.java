@@ -26,7 +26,6 @@ public class MyPageController implements MyPageApiSpecification{
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-
     @DeleteMapping
     public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal CustomUserDetails userDetails, HttpServletResponse response) {
         myPageService.deleteAccount(userDetails.getId(), response);
