@@ -75,7 +75,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(AUTHENTICATED_ENDPOINTS).authenticated()
-                        .requestMatchers(ANALYSIS_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -105,9 +104,5 @@ public class SecurityConfig {
     private static final String[] AUTHENTICATED_ENDPOINTS = {
             "/api/v1/auth/logout",
             "/api/v1/users/**"
-    };
-
-    private static final String[] ANALYSIS_ENDPOINTS = {
-            "/api/v1/analyses/**"
     };
 }
