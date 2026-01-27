@@ -23,45 +23,47 @@ public class JwtTokenProvider {
     private static final String GRANT_TYPE = "Bearer";
 
     private final String key;
-    private final long accessTokenValidityInMilliSeconds;
-    private final long refreshTokenValidityInMilliSeconds;
+    private final long accessTokenValidityInSeconds;
+    private final long refreshTokenValidityInSeconds;
     private final UserDetailsService userDetailsService;
 
     public JwtTokenProvider(
             @Value("${jwt.key}") String key,
-            @Value("${jwt.access-token-validity-in-milliseconds}") long accessTokenValidityInMilliSeconds,
-            @Value("${jwt.refresh-token-validity-in-milliseconds}") long refreshTokenValidityInMilliseconds,
+            @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
+            @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds,
             UserDetailsService userDetailsService) {
         this.key = key;
-        this.accessTokenValidityInMilliSeconds = accessTokenValidityInMilliSeconds;
-        this.refreshTokenValidityInMilliSeconds = refreshTokenValidityInMilliseconds;
+        this.accessTokenValidityInSeconds = accessTokenValidityInSeconds;
+        this.refreshTokenValidityInSeconds = refreshTokenValidityInSeconds;
         this.userDetailsService = userDetailsService;
     }
 
     //AccessToken, RefreshToken 생성
     public TokenDto generateTokenDto(Authentication authentication) {
         String authorities = extractAuthorities(authentication);
-        long now = new Date().getTime();
+        long nowMillis = System.currentTimeMillis();
 
-        Date accessTokenExpiresIn = new Date(now + accessTokenValidityInMilliSeconds);
-        Date refreshTokenExpiresIn = new Date(now + refreshTokenValidityInMilliSeconds);
+        Date accessTokenExpiresAt = new Date(nowMillis + (accessTokenValidityInSeconds * 1000));
+        Date refreshTokenExpiresAt = new Date(nowMillis + (refreshTokenValidityInSeconds * 1000));
 
         String accessToken = createAccessToken(
                 authentication.getName(),
                 authorities,
-                accessTokenExpiresIn
+                accessTokenExpiresAt
         );
         String refreshToken = createRefreshToken(
                 authentication.getName(),
-                refreshTokenExpiresIn
+                refreshTokenExpiresAt
         );
 
         return TokenDto.builder()
                 .grantType(GRANT_TYPE)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
-                .refreshTokenExpiresIn(refreshTokenExpiresIn.getTime())
+                .accessTokenExpiresAt(accessTokenExpiresAt.getTime())
+                .refreshTokenExpiresAt(refreshTokenExpiresAt.getTime())
+                .accessTokenMaxAge((int) accessTokenValidityInSeconds)
+                .refreshTokenMaxAge((int) refreshTokenValidityInSeconds)
                 .build();
     }
 

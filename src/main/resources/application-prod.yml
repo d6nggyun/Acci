@@ -77,8 +77,8 @@ spring:
 # JWT 설정
 jwt:
   key: ${JWT_SECRET_KEY}
-  access-token-validity-in-milliseconds: 15552000000  #6개월
-  refresh-token-validity-in-milliseconds: 31104000000 #1년
+  access-token-validity-in-seconds: 15552000  #6개월
+  refresh-token-validity-in-seconds: 31104000 #1년
 
 # OpenAI 설정
 openai:

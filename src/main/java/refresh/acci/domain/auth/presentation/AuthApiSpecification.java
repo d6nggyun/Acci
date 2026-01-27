@@ -23,21 +23,20 @@ public interface AuthApiSpecification {
     @Operation(
             summary = "OAuth 인증 코드 교환",
             description = "OAuth 로그인 후 받은 인증 코드(Authorization Code)를 Access Token과 Refresh Token으로 교환합니다. <br><br>" +
-                    "**Access Token과 Refresh Token은 모두 HttpOnly Cookie로 자동 저장됩니다.** <br>" +
-                    "응답 바디에는 토큰 만료 시간만 포함됩니다. <br><br>" +
-                    "프론트엔드는 Cookie가 자동으로 포함되므로 별도로 토큰을 관리할 필요가 없습니다. <br>" +
-                    "API 요청 시 `credentials: 'include'` 옵션을 사용하여 Cookie를 포함해야 합니다.",
+                    "Access Token과 Refresh Token은 모두 HttpOnly 쿠키로 자동 저장됩니다. <br><br>" +
+                    "응답 바디에는 토큰 만료 시각만 포함됩니다. <br><br>" +
+                    "프론트엔드는 API 요청 시 credentials: 'include'를 설정해야 합니다.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "토큰 교환 성공 (Access Token과 Refresh Token은 HttpOnly Cookie로 설정됨)",
+                            description = "토큰 교환 성공",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = TokenResponse.class),
                                     examples = @ExampleObject(value = """
                                             {
                                                 "grantType": "Bearer",
-                                                "accessTokenExpiresIn": 1735689600000
+                                                "accessTokenExpiresAt": 1735689600000
                                             }
                                             """))),
                     @ApiResponse(
@@ -48,8 +47,8 @@ public interface AuthApiSpecification {
                                     examples = @ExampleObject(value = """
                                             {
                                                 "code": 401,
-                                                "name": "INVALID_AUTH_CODE",
-                                                "message": "유효하지 않거나 만료된 인증 코드입니다.",
+                                                "name": "INVALID_TOKEN",
+                                                "message": "유효하지 않은 토큰입니다.",
                                                 "errors": null
                                             }
                                             """)))
@@ -61,21 +60,20 @@ public interface AuthApiSpecification {
     @Operation(
             summary = "Access Token 재발급",
             description = "만료된 Access Token을 Refresh Token을 이용하여 재발급합니다. <br><br>" +
-                    "Refresh Token은 HttpOnly Cookie에서 자동으로 읽어옵니다. <br>" +
-                    "**새로운 Access Token과 Refresh Token이 모두 HttpOnly Cookie로 설정됩니다 (Refresh Token Rotation).** <br>" +
-                    "응답 바디에는 토큰 만료 시간만 포함됩니다. <br><br>" +
+                    "Refresh Token은 HttpOnly 쿠키에서 자동으로 읽어오며, 새로운 Access Token과 Refresh Token을 쿠키로 저장합니다. <br><br>" +
+                    "응답 바디에는 토큰 만료 시각만 포함됩니다. <br><br>" +
                     "Refresh Token이 만료된 경우 재로그인이 필요합니다.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "토큰 재발급 성공 (새로운 Access Token과 Refresh Token은 HttpOnly Cookie로 설정됨)",
+                            description = "토큰 재발급 성공",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = TokenResponse.class),
                                     examples = @ExampleObject(value = """
                                             {
                                                 "grantType": "Bearer",
-                                                "accessTokenExpiresIn": 1735689600000
+                                                "accessTokenExpiresAt": 1735689600000
                                             }
                                             """))),
                     @ApiResponse(
@@ -99,13 +97,12 @@ public interface AuthApiSpecification {
     @Operation(
             summary = "로그아웃",
             description = "현재 로그인된 사용자를 로그아웃 처리합니다. <br><br>" +
-                    "**Access Token과 Refresh Token이 모두 HttpOnly Cookie에서 삭제됩니다.** <br>" +
-                    "프론트엔드는 Cookie가 자동으로 삭제되므로 별도 처리가 필요하지 않습니다. <br><br>" +
+                    "HttpOnly 쿠키에 저장된 Access Token과 Refresh Token을 모두 삭제합니다. <br><br>" +
                     "이 API는 인증이 필요하며, Cookie에 유효한 Access Token이 포함되어야 합니다.",
             responses = {
                     @ApiResponse(
                             responseCode = "204",
-                            description = "로그아웃 성공 (Access Token과 Refresh Token Cookie 삭제됨)",
+                            description = "로그아웃 성공",
                             content = @Content()),
                     @ApiResponse(
                             responseCode = "401",

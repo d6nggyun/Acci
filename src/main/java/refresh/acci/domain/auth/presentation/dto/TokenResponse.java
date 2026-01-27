@@ -8,27 +8,27 @@ import refresh.acci.global.security.jwt.TokenDto;
 @Getter
 public class TokenResponse {
     private final String grantType;
-    private final Long accessTokenExpiresIn;
+    private final Long accessTokenExpiresAt;
 
     @Builder
-    public TokenResponse(String grantType, Long accessTokenExpiresIn) {
+    public TokenResponse(String grantType, Long accessTokenExpiresAt) {
         this.grantType = grantType;
-        this.accessTokenExpiresIn = accessTokenExpiresIn;
+        this.accessTokenExpiresAt = accessTokenExpiresAt;
     }
 
     //Refresh Token
     public static TokenResponse from(TokenDto tokenDto) {
         return TokenResponse.builder()
                 .grantType(tokenDto.getGrantType())
-                .accessTokenExpiresIn(tokenDto.getAccessTokenExpiresIn())
+                .accessTokenExpiresAt(tokenDto.getAccessTokenExpiresAt())
                 .build();
     }
 
     //AuthCode 교환용
-    public static TokenResponse from(Long accessTokenExpiresIn) {
+    public static TokenResponse from(Long accessTokenExpiresAt) {
         return TokenResponse.builder()
                 .grantType("Bearer")
-                .accessTokenExpiresIn(accessTokenExpiresIn)
+                .accessTokenExpiresAt(accessTokenExpiresAt)
                 .build();
     }
 }

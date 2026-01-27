@@ -47,9 +47,11 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         AuthCode authCode = AuthCode.of(
                 code,
                 tokenDto.getAccessToken(),
-                tokenDto.getAccessTokenExpiresIn(),
+                tokenDto.getAccessTokenExpiresAt(),
+                tokenDto.getAccessTokenMaxAge(),
                 tokenDto.getRefreshToken(),
-                tokenDto.getRefreshTokenExpiresIn()
+                tokenDto.getRefreshTokenExpiresAt(),
+                tokenDto.getRefreshTokenMaxAge()
         );
         authCodeRepository.save(authCode);
 

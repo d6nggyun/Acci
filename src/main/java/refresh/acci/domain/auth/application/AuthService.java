@@ -29,15 +29,17 @@ public class AuthService {
         AuthCode authCode = getAuthCodeOrThrow(code);
         authCodeRepository.deleteByCode(code);
 
-        CookieUtil.setAuthTokenCookies(response,
+        CookieUtil.setAuthTokenCookies(
+                response,
                 authCode.getAccessToken(),
-                authCode.getAccessTokenExpiresIn(),
+                authCode.getAccessTokenMaxAge(),
                 authCode.getRefreshToken(),
-                authCode.getRefreshTokenExpiresIn());
+                authCode.getRefreshTokenMaxAge()
+        );
 
         log.info("인증 코드 교환 성공: {}", code.substring(0, 8) + "...");
 
-        return TokenResponse.from(authCode.getAccessTokenExpiresIn());
+        return TokenResponse.from(authCode.getAccessTokenExpiresAt());
     }
 
     public TokenResponse refresh(String refreshToken, HttpServletResponse response) {
@@ -48,9 +50,9 @@ public class AuthService {
 
         CookieUtil.setAuthTokenCookies(response,
                 tokenDto.getAccessToken(),
-                tokenDto.getAccessTokenExpiresIn(),
+                tokenDto.getAccessTokenMaxAge(),
                 tokenDto.getRefreshToken(),
-                tokenDto.getRefreshTokenExpiresIn());
+                tokenDto.getRefreshTokenMaxAge());
 
         return TokenResponse.from(tokenDto);
     }
