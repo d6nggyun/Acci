@@ -54,11 +54,8 @@ public class CookieUtil {
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
-    public static void setAuthTokenCookies(HttpServletResponse response, String accessToken, Long accessTokenExpiresIn, String refreshToken, Long refreshTokenExpiresIn) {
-        int accessMaxAge = (int) (accessTokenExpiresIn / 1000);
+    public static void setAuthTokenCookies(HttpServletResponse response, String accessToken, Integer accessMaxAge, String refreshToken, Integer refreshMaxAge) {
         setAccessTokenCookie(response, accessToken, accessMaxAge);
-
-        int refreshMaxAge = (int) (refreshTokenExpiresIn / 1000);
         setRefreshTokenCookie(response, refreshToken, refreshMaxAge);
     }
 

@@ -11,22 +11,26 @@ public class AuthCode {
 
     private final String code;
     private final String accessToken;
-    private final Long accessTokenExpiresIn;
+    private final Long accessTokenExpiresAt;
+    private final Integer accessTokenMaxAge;
     private final String refreshToken;
-    private final Long refreshTokenExpiresIn;
+    private final Long refreshTokenExpiresAt;
+    private final Integer refreshTokenMaxAge;
     private final LocalDateTime expiresAt;
 
-    public AuthCode(String code, String accessToken, Long accessTokenExpiresIn, String refreshToken, Long refreshTokenExpiresIn, int validitySeconds) {
+    public AuthCode(String code, String accessToken, Long accessTokenExpiresAt, Integer accessTokenMaxAge, String refreshToken, Long refreshTokenExpiresAt, Integer refreshTokenMaxAge, int validitySeconds) {
         this.code = code;
         this.accessToken = accessToken;
-        this.accessTokenExpiresIn = accessTokenExpiresIn;
+        this.accessTokenExpiresAt = accessTokenExpiresAt;
+        this.accessTokenMaxAge = accessTokenMaxAge;
         this.refreshToken = refreshToken;
-        this.refreshTokenExpiresIn = refreshTokenExpiresIn;
+        this.refreshTokenExpiresAt = refreshTokenExpiresAt;
+        this.refreshTokenMaxAge = refreshTokenMaxAge;
         this.expiresAt = LocalDateTime.now().plusSeconds(validitySeconds);
     }
 
-    public static AuthCode of(String code, String accessToken, Long accessTokenExpiresIn, String refreshToken, Long refreshTokenExpiresIn) {
-        return new AuthCode(code, accessToken, accessTokenExpiresIn, refreshToken, refreshTokenExpiresIn, DEFAULT_VALIDITY_SECONDS);
+    public static AuthCode of(String code, String accessToken, Long accessTokenExpiresAt, Integer accessTokenMaxAge, String refreshToken, Long refreshTokenExpiresAt, Integer refreshTokenMaxAge) {
+        return new AuthCode(code, accessToken, accessTokenExpiresAt, accessTokenMaxAge, refreshToken, refreshTokenExpiresAt, refreshTokenMaxAge, DEFAULT_VALIDITY_SECONDS);
     }
 
     public boolean isExpired() {
