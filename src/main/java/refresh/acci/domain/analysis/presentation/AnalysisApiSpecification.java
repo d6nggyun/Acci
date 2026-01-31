@@ -1,6 +1,7 @@
 package refresh.acci.domain.analysis.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,6 +18,7 @@ import refresh.acci.domain.analysis.presentation.dto.res.AnalysisUploadResponse;
 import refresh.acci.domain.user.model.CustomUserDetails;
 import refresh.acci.global.exception.ErrorResponseEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Analysis (분석)", description = "Analysis (분석) 관련 API")
@@ -99,4 +101,16 @@ public interface AnalysisApiSpecification {
                                       """)))
             })
     ResponseEntity<AnalysisResultResponse> getAnalysisResult(@PathVariable UUID analysisId);
+
+    @Operation(
+            summary = "회원의 전체 분석 기록 조회",
+            description = "인증된 회원의 전체 영상 분석 기록을 최신순으로 조회합니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "회원의 전체 분석 기록 조회 성공",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = AnalysisResultResponse.class))))
+            })
+    ResponseEntity<List<AnalysisResultResponse>> getUserAnalysisHistory(@AuthenticationPrincipal CustomUserDetails userDetails);
 }
