@@ -23,6 +23,9 @@ public class Analysis extends BaseTime {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
+    @Column(name = "ai_job_id", unique = true)
+    private String AiJobId;
+
     @Column(name = "user_id")
     private Long userId;
 
