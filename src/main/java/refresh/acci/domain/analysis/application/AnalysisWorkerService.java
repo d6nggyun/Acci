@@ -86,7 +86,7 @@ public class AnalysisWorkerService {
         WebClient webClient = webClientBuilder.baseUrl(aiServerUrl).build();
 
         return webClient.post()
-                .uri("/analyze") // AI 서버의 분석 엔드포인트
+                .uri("/api/v1/anlayze") // AI 서버의 분석 엔드포인트
                 .contentType(MediaType.MULTIPART_FORM_DATA) // Content-Type 설정
                 .body(BodyInserters.fromMultipartData(builder.build())) // 멀티파트 데이터를 실제 HTTP 요청 바디로 인코딩해서 넣음
                 .retrieve() // 응답을 받아옴

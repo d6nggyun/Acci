@@ -53,6 +53,10 @@ dependencies {
 	// WebClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+	// S3
+	implementation platform("software.amazon.awssdk:bom:2.25.15")
+	implementation "software.amazon.awssdk:s3"
+
     // Testing
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
