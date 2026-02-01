@@ -37,6 +37,8 @@ public enum ErrorCode {
     UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, 400, "지원하지 않는 파일 형식입니다."),
     TOO_MANY_ANALYSIS_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, 429, "분석 요청이 너무 많습니다. 잠시 후 다시 시도해주세요."),
     VIDEO_FILE_MISSING(HttpStatus.BAD_REQUEST, 400, "업로드할 비디오 파일이 없습니다."),
+    ACCIDENT_TYPE_NOT_DETECTED(HttpStatus.BAD_REQUEST, 400, "사고 유형 매핑에 실패했습니다."),
+    ANALYSIS_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, 500, "분석이 중단되었습니다."),
 
     // Repair Estimate
     INVALID_VEHICLE_BRAND(HttpStatus.BAD_REQUEST, 400, "유효하지 않은 차량 브랜드입니다."),

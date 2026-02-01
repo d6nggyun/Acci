@@ -5,8 +5,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
-import refresh.acci.domain.analysis.model.enums.AnalysisStatus;
 import refresh.acci.domain.analysis.model.enums.AccidentType;
+import refresh.acci.domain.analysis.model.enums.AnalysisStatus;
+import refresh.acci.domain.analysis.presentation.dto.res.AiResultResponse;
 import refresh.acci.global.common.BaseTime;
 
 import java.util.UUID;
@@ -24,17 +25,32 @@ public class Analysis extends BaseTime {
     private UUID id;
 
     @Column(name = "ai_job_id", unique = true)
-    private String AiJobId;
+    private String aiJobId;
 
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "accident_rate")
-    private Long accidentRate;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "accident_type")
     private AccidentType accidentType;
+
+    @Column(name = "accident_rate_A")
+    private Long accidentRateA;
+
+    @Column(name = "accident_rate_B")
+    private Long accidentRateB;
+
+    @Column(name = "place")
+    private String place;
+
+    @Column(name = "situation")
+    private String situation;
+
+    @Column(name = "vehicle_A_situation")
+    private String vehicleASituation;
+
+    @Column(name = "vehicle_B_situation")
+    private String vehicleBSituation;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "accident_status")
@@ -52,15 +68,26 @@ public class Analysis extends BaseTime {
         return new Analysis(userId, AnalysisStatus.PROCESSING);
     }
 
-    public void completeAnalysis(Long accidentRate, AccidentType accidentType) {
-        this.accidentRate = accidentRate;
-        this.accidentType = accidentType;
-        this.analysisStatus = AnalysisStatus.COMPLETED;
+    public void failAnalysis() {
+        this.analysisStatus = AnalysisStatus.FAILED;
         this.isCompleted = true;
     }
 
-    public void failAnalysis() {
-        this.analysisStatus = AnalysisStatus.FAILED;
+    public void markProcessing(String aiJobId) {
+        this.aiJobId = aiJobId;
+        this.analysisStatus = AnalysisStatus.PROCESSING;
+        this.isCompleted = false;
+    }
+
+    public void completeAnalysisFromAi(AiResultResponse result) {
+        this.accidentType = AccidentType.fromInt(result.accident_type());
+        this.accidentRateA = (long) result.vehicle_A_fault();
+        this.accidentRateB = (long) result.vehicle_B_fault();
+        this.place = result.place();
+        this.situation = result.situation();
+        this.vehicleASituation = result.vehicle_a();
+        this.vehicleBSituation = result.vehicle_b();
+        this.analysisStatus = AnalysisStatus.COMPLETED;
         this.isCompleted = true;
     }
 }
