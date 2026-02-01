@@ -30,6 +30,9 @@ public class Analysis extends BaseTime {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "video_s3_key", nullable = false)
+    private String videoS3Key;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "accident_type")
     private AccidentType accidentType;
@@ -66,6 +69,10 @@ public class Analysis extends BaseTime {
 
     public static Analysis of(Long userId) {
         return new Analysis(userId, AnalysisStatus.PROCESSING);
+    }
+
+    public void setVideoS3Key(String videoS3Key) {
+        this.videoS3Key = videoS3Key;
     }
 
     public void failAnalysis() {

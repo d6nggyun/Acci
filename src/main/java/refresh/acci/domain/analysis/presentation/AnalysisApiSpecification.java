@@ -47,6 +47,19 @@ public interface AnalysisApiSpecification {
                                          "message": "지원하지 않는 파일 형식입니다.",
                                          "errors": null
                                       }
+                                      """))),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "분석이 중단되었습니다.",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseEntity.class),
+                                    examples = @ExampleObject(value = """
+                                      {
+                                         "code": 500,
+                                         "name": "ANALYSIS_INTERRUPTED",
+                                         "message": "분석이 중단되었습니다.",
+                                         "errors": null
+                                      }
                                       """)))
     })
     ResponseEntity<AnalysisUploadResponse> analyze(@RequestPart("video") MultipartFile file,
@@ -113,4 +126,34 @@ public interface AnalysisApiSpecification {
                                     array = @ArraySchema(schema = @Schema(implementation = AnalysisResultResponse.class))))
             })
     ResponseEntity<List<AnalysisResultResponse>> getUserAnalysisHistory(@AuthenticationPrincipal CustomUserDetails userDetails);
+
+    @Operation(
+            summary = "분석 영상 URL 조회",
+            description = "해당 분석의 영상 URL을 조회합니다. <br><br>" +
+                    "해당 분석이 인증된 회원의 소유가 아닐 경우 접근이 거부됩니다. <br><br>" +
+                    "영상 URL은 10분이 지나면 만료됩니다.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "분석 영상 URL 조회 성공",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = String.class))),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "해당 분석에 접근할 권한이 없습니다.",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseEntity.class),
+                                    examples = @ExampleObject(value = """
+                                      {
+                                         "code": 403,
+                                         "name": "ACCESS_DENIED_TO_ANALYSIS",
+                                         "message": "해당 분석에 접근할 권한이 없습니다.",
+                                         "errors": null
+                                      }
+                                      """)))
+            })
+    ResponseEntity<String> getVideoUrl(
+            @PathVariable UUID analysisId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    );
 }
