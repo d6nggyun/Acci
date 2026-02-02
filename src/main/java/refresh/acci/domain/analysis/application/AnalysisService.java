@@ -2,6 +2,7 @@ package refresh.acci.domain.analysis.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +54,8 @@ public class AnalysisService {
         Analysis analysis = analysisCommandService.saveAndFlushNewAnalysis(Analysis.of(userId));
 
         // S3 키 생성
-        String s3Key = "analysis/" + analysis.getId() + "/original.mp4";
+        String ext = FilenameUtils.getExtension(video.getOriginalFilename());
+        String s3Key = "analysis/" + analysis.getId() + "/original." + ext;
 
         // 임시 파일로 저장 후 비동기 분석 작업 실행
         Path tempFilePath = tempVideoStore.saveToTempFile(video, analysis.getId());
@@ -62,7 +64,7 @@ public class AnalysisService {
         try {
             // S3 업로드
             s3FileService.uploadFile(bucket, s3Key, tempFilePath);
-            analysis.setVideoS3Key(s3Key);
+            analysis.attachVideoS3Key(s3Key);
 
             analysisExecutor.execute(() -> analysisWorkerService.runAnalysis(analysis.getId(), tempFilePath));
         } catch (RejectedExecutionException e) {
@@ -107,6 +109,10 @@ public class AnalysisService {
         // 권한 체크 (본인 영상만)
         if (!analysis.getUserId().equals(userDetails.getId())) {
             throw new CustomException(ErrorCode.ACCESS_DENIED_TO_ANALYSIS);
+        }
+
+        if (analysis.getVideoS3Key() == null) {
+            throw new CustomException(ErrorCode.VIDEO_NOT_FOUND);
         }
 
         return s3FileService.generatePresignedUrl(

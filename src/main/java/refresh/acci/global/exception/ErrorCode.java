@@ -41,6 +41,7 @@ public enum ErrorCode {
     ANALYSIS_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, 500, "분석이 중단되었습니다."),
     ACCESS_DENIED_TO_ANALYSIS(HttpStatus.FORBIDDEN, 403, "해당 분석에 접근할 권한이 없습니다."),
     S3_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, 500, "S3 업로드에 실패했습니다."),
+    VIDEO_NOT_FOUND(HttpStatus.NOT_FOUND, 404, "분석 영상이 존재하지 않습니다."),
 
     // Repair Estimate
     INVALID_VEHICLE_BRAND(HttpStatus.BAD_REQUEST, 400, "유효하지 않은 차량 브랜드입니다."),

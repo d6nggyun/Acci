@@ -71,7 +71,7 @@ public class Analysis extends BaseTime {
         return new Analysis(userId, AnalysisStatus.PROCESSING);
     }
 
-    public void setVideoS3Key(String videoS3Key) {
+    public void attachVideoS3Key(String videoS3Key) {
         this.videoS3Key = videoS3Key;
     }
 
