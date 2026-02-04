@@ -102,6 +102,11 @@ ai:
   server:
     url: ${AI_SERVER_URL}
 
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+
 logging:
   file:
     path: /acci/logs
