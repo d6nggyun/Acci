@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import refresh.acci.domain.analysis.infra.persistence.AnalysisRepository;
 import refresh.acci.domain.analysis.model.Analysis;
-import refresh.acci.domain.analysis.presentation.dto.res.AnalysisResultResponse;
+import refresh.acci.domain.analysis.presentation.dto.res.AiResultResponse;
 import refresh.acci.global.exception.CustomException;
 import refresh.acci.global.exception.ErrorCode;
 
@@ -25,9 +25,16 @@ public class AnalysisCommandService {
     }
 
     @Transactional
-    public Analysis completeAndGetAnalysis(UUID analysisId, AnalysisResultResponse response) {
+    public Analysis markProcessing(UUID analysisId, String aiJobId) {
         Analysis analysis = getAnalysis(analysisId);
-        analysis.completeAnalysis(response.accidentRate(), response.accidentType());
+        analysis.markProcessing(aiJobId);
+        return analysis;
+    }
+
+    @Transactional
+    public Analysis completeFromAi(UUID analysisId, AiResultResponse result) {
+        Analysis analysis = getAnalysis(analysisId);
+        analysis.completeAnalysisFromAi(result);
         return analysis;
     }
 
