@@ -57,10 +57,13 @@ dependencies {
 	implementation platform("software.amazon.awssdk:bom:2.25.15")
 	implementation "software.amazon.awssdk:s3"
 
+	// File
+	implementation 'commons-io:commons-io:2.15.1'
+
 	// Properties
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-    // Testing
+  // Testing
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

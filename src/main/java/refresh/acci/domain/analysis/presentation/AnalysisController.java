@@ -27,14 +27,18 @@ public class AnalysisController implements AnalysisApiSpecification{
 
     // 영상 분석 업로드
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AnalysisUploadResponse> analyze(@RequestPart("video") MultipartFile file,
-                                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<AnalysisUploadResponse> analyze(
+            @RequestPart("video") MultipartFile file,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(analysisService.anaylze(file, userDetails));
     }
 
     // [SSE 구독] 영상 분석 상태 조회
     @GetMapping(value = "/{analysisId}/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter subscribe(@PathVariable UUID analysisId) {
+    public SseEmitter subscribe(
+            @PathVariable UUID analysisId
+    ) {
         return analysisSseService.subscribe(analysisId);
     }
 
@@ -46,13 +50,26 @@ public class AnalysisController implements AnalysisApiSpecification{
 
     // 영상 분석 결과 조회
     @GetMapping("/{analysisId}")
-    public ResponseEntity<AnalysisResultResponse> getAnalysisResult(@PathVariable UUID analysisId) {
+    public ResponseEntity<AnalysisResultResponse> getAnalysisResult(
+            @PathVariable UUID analysisId
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(analysisService.getAnalysisResult(analysisId));
     }
 
     // 회원의 전체 분석 기록 조회
     @GetMapping("/history")
-    public ResponseEntity<List<AnalysisResultResponse>> getUserAnalysisHistory(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<List<AnalysisResultResponse>> getUserAnalysisHistory(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(analysisService.getUserAnalysisHistory(userDetails));
+    }
+
+    // 분석 영상 URL 조회
+    @GetMapping("/{analysisId}/video")
+    public ResponseEntity<String> getVideoUrl(
+            @PathVariable UUID analysisId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(analysisService.getVideoUrl(analysisId, userDetails));
     }
 }
