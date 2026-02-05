@@ -1,4 +1,4 @@
-package refresh.acci.domain.user.infra;
+package refresh.acci.domain.user.infra.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import refresh.acci.domain.user.model.enums.Provider;

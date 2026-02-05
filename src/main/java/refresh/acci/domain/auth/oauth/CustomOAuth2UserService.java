@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import refresh.acci.domain.user.infra.UserRepository;
+import refresh.acci.domain.user.infra.persistence.UserRepository;
 import refresh.acci.domain.user.model.CustomOAuthUser;
 import refresh.acci.domain.user.model.enums.Provider;
 import refresh.acci.domain.user.model.User;

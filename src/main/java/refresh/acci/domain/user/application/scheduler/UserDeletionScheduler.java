@@ -1,11 +1,11 @@
-package refresh.acci.domain.user.application;
+package refresh.acci.domain.user.application.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import refresh.acci.domain.user.infra.UserRepository;
+import refresh.acci.domain.user.infra.persistence.UserRepository;
 import refresh.acci.domain.user.model.User;
 
 import java.time.LocalDateTime;

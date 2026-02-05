@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import refresh.acci.domain.user.application.MyPageService;
+import refresh.acci.domain.user.application.facade.UserFacade;
 import refresh.acci.domain.user.model.CustomUserDetails;
 import refresh.acci.domain.user.presentation.dto.MyPageResponse;
 
@@ -17,18 +17,18 @@ import refresh.acci.domain.user.presentation.dto.MyPageResponse;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users/me")
-public class MyPageController implements MyPageApiSpecification{
-    private final MyPageService myPageService;
+public class UserController implements UserApiSpecification {
+    private final UserFacade userFacade;
 
     @GetMapping
     public ResponseEntity<MyPageResponse> getMyPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        MyPageResponse response = myPageService.getMyPage(userDetails.getId());
+        MyPageResponse response = userFacade.getMyPage(userDetails.getId());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal CustomUserDetails userDetails, HttpServletResponse response) {
-        myPageService.deleteAccount(userDetails.getId(), response);
+        userFacade.deleteUserAccount(userDetails.getId(), response);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
