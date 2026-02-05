@@ -14,7 +14,7 @@ import refresh.acci.domain.user.presentation.dto.MyPageResponse;
 import refresh.acci.global.exception.ErrorResponseEntity;
 
 @Tag(name = "User (사용자)", description = "User (사용자) 관련 API")
-public interface MyPageApiSpecification {
+public interface UserApiSpecification  {
 
     @Operation(
             summary = "내 정보 조회",

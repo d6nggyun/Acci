@@ -62,6 +62,11 @@ public class AuthService {
         log.info("로그아웃 완료 - providerId: {}", providerId);
     }
 
+    //인증 정보 제거
+    public void clearAuthentication(HttpServletResponse response) {
+        CookieUtil.deleteAllAuthCookies(response);
+    }
+
     //AuthCode 가져오기
     private AuthCode getAuthCodeOrThrow(String code) {
         return authCodeRepository.findByCode(code)

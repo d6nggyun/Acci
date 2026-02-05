@@ -1,4 +1,4 @@
-package refresh.acci.domain.user.application;
+package refresh.acci.domain.user.application.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,11 +7,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import refresh.acci.domain.user.infra.UserRepository;
+import refresh.acci.domain.user.infra.persistence.UserRepository;
 import refresh.acci.domain.user.model.CustomUserDetails;
 import refresh.acci.domain.user.model.User;
-import refresh.acci.global.exception.CustomException;
-import refresh.acci.global.exception.ErrorCode;
 
 @Slf4j
 @Service
