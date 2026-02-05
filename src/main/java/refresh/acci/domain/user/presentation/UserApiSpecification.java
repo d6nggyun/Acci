@@ -14,12 +14,13 @@ import refresh.acci.domain.user.presentation.dto.MyPageResponse;
 import refresh.acci.global.exception.ErrorResponseEntity;
 
 @Tag(name = "User (사용자)", description = "User (사용자) 관련 API")
-public interface UserApiSpecification  {
+public interface UserApiSpecification {
 
     @Operation(
             summary = "내 정보 조회",
             description = "현재 로그인한 사용자의 프로필 정보를 조회합니다. <br><br>" +
-                    "이 API는 인증이 필요하며, Authorization 헤더에 유효한 Access Token을 포함해야 합니다. <br><br>" +
+                    "이 API는 인증이 필요하며, HttpOnly 쿠키에 저장된 Access Token이 자동으로 전송됩니다. <br>" +
+                    "프론트엔드는 API 요청 시 credentials: 'include' 옵션을 설정해야 합니다. <br><br>" +
                     "사용자의 이름, 이메일, 프로필 이미지, 권한 정보를 반환합니다.",
             responses = {
                     @ApiResponse(
@@ -68,10 +69,11 @@ public interface UserApiSpecification  {
     @Operation(
             summary = "회원 탈퇴",
             description = "현재 로그인한 사용자를 탈퇴 처리합니다. <br><br>" +
-                    "이 API는 인증이 필요하며, Authorization 헤더에 유효한 Access Token을 포함해야 합니다. <br><br>" +
+                    "이 API는 인증이 필요하며, HttpOnly 쿠키에 저장된 Access Token이 자동으로 전송됩니다. <br>" +
+                    "프론트엔드는 API 요청 시 credentials: 'include' 옵션을 설정해야 합니다. <br><br>" +
                     "탈퇴 시 사용자 정보는 즉시 삭제되지 않고, 논리 삭제(Soft Delete) 처리됩니다. <br>" +
                     "개인정보 보호법에 따라 탈퇴 후 6개월간 데이터가 보관되며, 이후 자동으로 완전 삭제됩니다. <br><br>" +
-                    "탈퇴 처리 시 Refresh Token 쿠키가 삭제되며, Access Token은 클라이언트에서 직접 삭제해야 합니다.",
+                    "탈퇴 처리 시 Access Token과 Refresh Token 쿠키가 모두 삭제됩니다.",
             responses = {
                     @ApiResponse(
                             responseCode = "204",
