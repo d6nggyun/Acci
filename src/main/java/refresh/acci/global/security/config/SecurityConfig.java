@@ -22,7 +22,6 @@ import refresh.acci.global.security.jwt.JwtAccessDeniedHandler;
 import refresh.acci.global.security.jwt.JwtAuthenticationEntryPoint;
 import refresh.acci.global.security.jwt.JwtAuthorizationFilter;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -46,10 +45,15 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("https://acci-ai.site"));
+        configuration.setAllowedOrigins(List.of(
+                "https://acci-ai.site",
+                "https://www.acci-ai.site"
+        ));
+
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         //모든 경로에 적용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
