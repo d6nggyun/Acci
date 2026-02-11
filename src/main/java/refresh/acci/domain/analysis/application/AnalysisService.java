@@ -85,6 +85,7 @@ public class AnalysisService {
         } catch (SdkException e) {
             analysisCommandService.fail(analysis.getId());
             tempVideoStore.deleteFile(tempFilePath);
+            log.error("S3 업로드 실패 상세", e);
             throw new CustomException(ErrorCode.S3_UPLOAD_FAILED);
         }
 
