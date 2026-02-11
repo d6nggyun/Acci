@@ -73,7 +73,7 @@ jobs:
             docker run -d \
               --name "$APP_NAME" \
               -e SPRING_PROFILES_ACTIVE=prod \
-              -e "JAVA_TOOL_OPTIONS=-Duser.timezone=Asia/Seoul" \
+              -e "JAVA_TOOL_OPTIONS=-Duser.timezone=Asia/Seoul -Xms256m -Xmx512m" \
               -e "MYSQL_URL=${{ secrets.MYSQL_URL }}" \
               -e "MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}" \
               -e "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" \
