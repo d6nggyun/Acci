@@ -30,7 +30,7 @@ public class Analysis extends BaseTime {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "video_s3_key", nullable = false)
+    @Column(name = "video_s3_key")
     private String videoS3Key;
 
     @Enumerated(EnumType.STRING)
