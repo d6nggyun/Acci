@@ -22,10 +22,12 @@ public enum ErrorCode {
     INVALID_AUTH_CODE(HttpStatus.UNAUTHORIZED, 401, "유효하지 않거나 만료된 인증 코드입니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, 401, "리프레시 토큰이 존재하지 않습니다."),
 
-    //OAuth
+    // OAuth
     INVALID_PROVIDER(HttpStatus.BAD_REQUEST, 400, "Provider 정보가 없습니다."),
     UNSUPPORTED_OAUTH_PROVIDER(HttpStatus.BAD_REQUEST, 400, "지원하지 않는 OAuth 제공자입니다."),
     DUPLICATE_OAUTH_PROVIDER(HttpStatus.INTERNAL_SERVER_ERROR, 500, "중복된 OAuth 제공자가 등록되어 있습니다."),
+    OAUTH_SERIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, 500, "OAuth 요청 직렬화에 실패했습니다."),
+    OAUTH_DESERIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, 500, "OAuth 요청 역직렬화에 실패했습니다."),
 
     // Validation
     VALIDATION_FAILED(HttpStatus.BAD_REQUEST, 400, "요청한 값이 올바르지 않습니다."),
