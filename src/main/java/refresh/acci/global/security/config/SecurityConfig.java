@@ -21,6 +21,7 @@ import refresh.acci.domain.auth.oauth.CustomOAuth2UserService;
 import refresh.acci.global.security.jwt.JwtAccessDeniedHandler;
 import refresh.acci.global.security.jwt.JwtAuthenticationEntryPoint;
 import refresh.acci.global.security.jwt.JwtAuthorizationFilter;
+import refresh.acci.global.security.oauth.CookieOAuthAuthorizationRequestRepository;
 
 import java.util.List;
 
@@ -35,6 +36,8 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final CookieOAuthAuthorizationRequestRepository cookieOAuthAuthorizationRequestRepository;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -69,7 +72,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
@@ -79,6 +84,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(authorization -> authorization
+                                .authorizationRequestRepository(cookieOAuthAuthorizationRequestRepository)
+                        )
                         .redirectionEndpoint(rediriction -> rediriction.baseUri("/api/v1/auth/oauth2/callback/*"))
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .successHandler(oauthSuccessHandler)
