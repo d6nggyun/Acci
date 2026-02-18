@@ -1,4 +1,4 @@
-package refresh.acci.domain.file.application;
+package refresh.acci.global.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
