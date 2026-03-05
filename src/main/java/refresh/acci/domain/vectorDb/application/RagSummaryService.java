@@ -8,7 +8,6 @@ import refresh.acci.domain.vectorDb.presentation.dto.res.RagSummaryResponse;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -17,8 +16,7 @@ public class RagSummaryService {
 
     private final GeminiGenerateClient geminiGenerateClient;
 
-    // TODO 요약할 때 Law랑 Precedent 저장 로직 필요
-    public RagSummaryResponse summarize(RagInfoResponse ragInfoResponse, UUID analysisId) {
+    public RagSummaryResponse summarize(RagInfoResponse ragInfoResponse) {
         if (ragInfoResponse == null || ragInfoResponse.hits() == null || ragInfoResponse.hits().isEmpty()) {
             return null;
         }
