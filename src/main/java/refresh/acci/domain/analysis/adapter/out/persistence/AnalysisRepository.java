@@ -15,7 +15,7 @@ public interface AnalysisRepository extends JpaRepository<Analysis, UUID> {
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("UPDATE Analysis a SET a.ragStatus = 'IN_PROGRESS' " +
-            "WHERE a.id = :analysisId AND a.ragStatus = 'NONE'")
+            "WHERE a.id = :analysisId AND (a.ragStatus = 'NONE' OR a.ragStatus = 'FAILED')")
     int tryMarkRagInProgress(@Param("analysisId") UUID analysisId);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
