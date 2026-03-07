@@ -121,4 +121,9 @@ public class PgVectorChunkRepository {
             rs.getString("chunk_text"),
             rs.getDouble("distance")
     );
+
+    public int deleteByDocName(String docName) {
+        String sql = "DELETE FROM legal_chunks WHERE doc_name = ?";
+        return jdbcTemplate.update(sql, docName);
+    }
 }
