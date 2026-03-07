@@ -18,6 +18,9 @@ import java.nio.file.Path;
 @Tag(name = "RAG API", description = "RAG 관련 API")
 public class RagController {
 
+    @Qualifier("vectorDbJdbcTemplate")
+    private final JdbcTemplate vectorJdbc;
+
     private final PdfIndexingService pdfIndexingService;
     private final PgVectorChunkRepository repo;
 
@@ -35,7 +38,7 @@ public class RagController {
     }
 
     @GetMapping("/api/v1/rag/debug/pg-encoding")
-    public String pgEncoding(@Qualifier("vectorDbJdbcTemplate") JdbcTemplate jt) {
-        return jt.queryForObject("SHOW client_encoding", String.class);
+    public String pgEncoding() {
+        return vectorJdbc.queryForObject("SHOW client_encoding", String.class);
     }
 }
