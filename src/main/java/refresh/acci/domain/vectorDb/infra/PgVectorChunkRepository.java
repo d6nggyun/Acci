@@ -82,11 +82,7 @@ public class PgVectorChunkRepository {
                0.0 AS distance
         FROM legal_chunks
         WHERE (? IS NULL OR accident_type = ?)
-          AND (
-            chunk_text ILIKE '%관련 법규%'
-            OR chunk_text ILIKE '%도로교통법%'
-            OR chunk_text ILIKE '%법규%'
-          )
+          AND section = 'LAW'
         ORDER BY page ASC, id ASC
         LIMIT ?
         """;
@@ -99,12 +95,7 @@ public class PgVectorChunkRepository {
                0.0 AS distance
         FROM legal_chunks
         WHERE (? IS NULL OR accident_type = ?)
-          AND (
-            chunk_text ILIKE '%참고 판례%'
-            OR chunk_text ILIKE '%판결%'
-            OR chunk_text ILIKE '%선고%'
-            OR chunk_text ILIKE '%지방법원%'
-          )
+          AND section = 'PRECEDENT'
         ORDER BY page ASC, id ASC
         LIMIT ?
         """;
