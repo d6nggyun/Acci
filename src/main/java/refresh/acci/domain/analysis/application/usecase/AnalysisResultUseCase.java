@@ -83,7 +83,8 @@ public class AnalysisResultUseCase {
         } else {
             analysisRepository.markRagFailed(analysisId);
         }
-        return AnalysisResultResponse.of(latestAnalysis, aiResult, summary);
+        Analysis refreshed = analysisRepository.getById(analysisId);
+        return AnalysisResultResponse.of(refreshed, aiResult, summary);
     }
 
     private RagSummaryResponse summarizeRagInfo(Analysis analysis) {
