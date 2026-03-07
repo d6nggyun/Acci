@@ -8,7 +8,9 @@ import refresh.acci.domain.law.infra.LawRepository;
 import refresh.acci.domain.law.model.Law;
 import refresh.acci.domain.precedent.infra.PrecedentRepository;
 import refresh.acci.domain.precedent.model.Precedent;
+import refresh.acci.domain.vectorDb.presentation.dto.res.PrecedentCasesResponse;
 import refresh.acci.domain.vectorDb.presentation.dto.res.RagSummaryResponse;
+import refresh.acci.domain.vectorDb.presentation.dto.res.RelatedLawsResponse;
 
 import java.util.List;
 import java.util.UUID;
@@ -44,13 +46,13 @@ public class JpaLawAndPrecedentAdapter implements LawAndPrecedentPort {
 
     @Override
     @Transactional(readOnly = true)
-    public List<RagSummaryResponse.RelatedLawsResponse> getRelatedLawsByAnalysisId(UUID analysisId) {
+    public List<RelatedLawsResponse> getRelatedLawsByAnalysisId(UUID analysisId) {
         return lawRepository.findAllLawsByAnalysisId(analysisId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<RagSummaryResponse.PrecedentCasesResponse> getPrecedentCasesByAnalysisId(UUID analysisId) {
+    public List<PrecedentCasesResponse> getPrecedentCasesByAnalysisId(UUID analysisId) {
         return precedentRepository.findAllPrecedentsByAnalysisId(analysisId);
     }
 }
