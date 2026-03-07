@@ -13,8 +13,10 @@ import refresh.acci.domain.analysis.model.enums.RagStatus;
 import refresh.acci.domain.user.model.CustomUserDetails;
 import refresh.acci.domain.vectorDb.application.RagSearchService;
 import refresh.acci.domain.vectorDb.application.RagSummaryService;
+import refresh.acci.domain.vectorDb.presentation.dto.res.PrecedentCasesResponse;
 import refresh.acci.domain.vectorDb.presentation.dto.res.RagInfoResponse;
 import refresh.acci.domain.vectorDb.presentation.dto.res.RagSummaryResponse;
+import refresh.acci.domain.vectorDb.presentation.dto.res.RelatedLawsResponse;
 import refresh.acci.global.exception.CustomException;
 import refresh.acci.global.exception.ErrorCode;
 
@@ -93,8 +95,8 @@ public class AnalysisResultUseCase {
     }
 
     private AnalysisResultResponse buildResultFromSaved(Analysis analysis, AccidentAiResultResponse aiResult) {
-        List<RagSummaryResponse.RelatedLawsResponse> relatedLawsResponses = lawAndPrecedentPort.getRelatedLawsByAnalysisId(analysis.getId());
-        List<RagSummaryResponse.PrecedentCasesResponse> precedentCasesResponses = lawAndPrecedentPort.getPrecedentCasesByAnalysisId(analysis.getId());
+        List<RelatedLawsResponse> relatedLawsResponses = lawAndPrecedentPort.getRelatedLawsByAnalysisId(analysis.getId());
+        List<PrecedentCasesResponse> precedentCasesResponses = lawAndPrecedentPort.getPrecedentCasesByAnalysisId(analysis.getId());
         RagSummaryResponse ragSummaryResponse = RagSummaryResponse.of(analysis, relatedLawsResponses, precedentCasesResponses);
         return AnalysisResultResponse.of(analysis, aiResult, ragSummaryResponse);
     }
