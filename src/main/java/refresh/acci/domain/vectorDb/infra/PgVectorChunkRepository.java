@@ -26,11 +26,38 @@ public class PgVectorChunkRepository {
                             String chunkText,
                             float[] embedding) {
         String sql = """
-                INSERT INTO legal_chunks(accident_type, doc_name, page, section, case_id, chunk_text, embedding)
-                VALUES (?, ?, ?, ?, ?, ?, ?::vector)
-                """;
+        INSERT INTO legal_chunks(accident_type, doc_name, page, section, case_id, chunk_text, embedding)
+        VALUES (?, ?, ?, ?, ?, ?, ?::vector)
+        """;
 
-        jdbcTemplate.update(sql, accidentType, docName, page, section, caseId, chunkText, vectorLiteral(embedding));
+        jdbcTemplate.execute((java.sql.Connection con) -> {
+            // 진짜 insert 커넥션 로그
+            try (var st = con.createStatement()) {
+                try (var rs = st.executeQuery("SHOW client_encoding")) {
+                    if (rs.next()) {
+                        log.info("INSERT(conn={}) client_encoding={}", System.identityHashCode(con), rs.getString(1));
+                    }
+                }
+                st.execute("SET client_encoding TO 'UTF8'");
+                try (var rs2 = st.executeQuery("SHOW client_encoding")) {
+                    if (rs2.next()) log.info("AFTER SET(conn={}) client_encoding={}", System.identityHashCode(con), rs2.getString(1));
+                }
+            }
+
+            // PreparedStatement는 con에서 만들고, 값 바인딩 후 실행
+            try (var ps = con.prepareStatement(sql)) {
+                ps.setObject(1, accidentType);
+                ps.setString(2, docName);
+                ps.setObject(3, page);
+                ps.setString(4, section);
+                ps.setString(5, caseId);
+                ps.setString(6, chunkText);
+                ps.setString(7, vectorLiteral(embedding));
+                ps.executeUpdate();
+            }
+
+            return null;
+        });
     }
 
     public List<LegalChunkRow> searchTopK(
