@@ -62,7 +62,8 @@ public class PdfIndexingService {
                 stripper.setEndPage(page);
 
                 // 페이지 텍스트 추출
-                String pageText = stripper.getText(doc).trim();
+                // 비정상 유니코드 정화
+                String pageText = sanitizeForPostgres(stripper.getText(doc)).trim();
                 if (pageText.isBlank()) continue;
 
                 // 사고유형 매핑: (page -> accidentType)
@@ -75,11 +76,13 @@ public class PdfIndexingService {
 
                 // 섹션 단위로 저장
                 for (SectionBlock block : blocks) {
+                    String blockText = sanitizeForPostgres(block.text());
                     // 섹션 텍스트가 너무 짧으면 저장 의미가 떨어져서 skip
-                    if (block.text().isBlank() || block.text().length() < 30) continue;
+                    if (blockText.isBlank() || blockText.length() < 30) continue;
 
                     // 섹션 텍스트를 chunk로 자른다
-                    for (String chunk : chunk(block.text(), 2000, 250)) {
+                    for (String chunk : chunk(blockText, 2000, 250)) {
+                        chunk = sanitizeForPostgres(chunk);
                         // 임베딩 생성
                         float[] emb = geminiEmbeddingService.embed(chunk);
 
@@ -193,5 +196,55 @@ public class PdfIndexingService {
             if (start < 0) start = 0;
         }
         return out;
+    }
+
+    /**
+     * PostgreSQL에 저장하기 전에 텍스트를 정화하는 메서드
+     * - NUL 문자 제거 (PostgreSQL은 NUL을 허용하지 않음)
+     * - 유니코드 surrogate(고아) 제거 (PostgreSQL은 고아 문자를 허용하지 않음)
+     * - 기타 제어문자 정리 (탭/개행은 허용, 그 외는 제거)
+     */
+    private String sanitizeForPostgres(String text) {
+        if (text == null) return null;
+
+        // NUL 제거
+        text = text.replace("\u0000", "");
+
+        // 고아 surrogate 제거
+        // 유니코드 보조평면 문자(이모지 등)는 UTF-16에서 surrogate pair(High + Low) 두 글자로 표현된다.
+        // 정상 케이스: HighSurrogate 다음에 LowSurrogate가 바로 붙어있음 → 그대로 유지
+        // 비정상 케이스(고아):
+        // - HighSurrogate만 있고 다음이 Low가 아님
+        // - LowSurrogate만 단독으로 있음
+        // 이런 "깨진 UTF-16"은 DB 저장/조회 과정에서 인코딩 오류를 유발할 수 있어서 제거한다.
+        StringBuilder sb = new StringBuilder(text.length());
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            // High Surrogate 처리
+            if (Character.isHighSurrogate(c)) {
+                // 다음 문자가 Low surrogate이면 정상 pair → 둘 다 유지하고 i를 하나 더 증가
+                if (i + 1 < text.length() && Character.isLowSurrogate(text.charAt(i + 1))) {
+                    // 정상 pair 유지
+                    sb.append(c).append(text.charAt(i + 1));
+                    i++;
+                } else {
+                    // High surrogate가 단독이면(고아) → 제거(append 안 함)
+                }
+                continue;
+            }
+
+            // Low surrogate가 단독으로 나오면(고아) → 제거
+            if (Character.isLowSurrogate(c)) {
+                continue;
+            }
+
+            // 기타 제어문자 정리 (탭/개행은 허용)
+            if (c < 0x20 && c != '\n' && c != '\r' && c != '\t') continue;
+
+            sb.append(c);
+        }
+
+        return sb.toString();
     }
 }

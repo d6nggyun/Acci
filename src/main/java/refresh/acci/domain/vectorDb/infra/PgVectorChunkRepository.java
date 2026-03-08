@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import refresh.acci.domain.vectorDb.presentation.dto.res.LegalChunkRow;
@@ -26,14 +25,6 @@ public class PgVectorChunkRepository {
                             String caseId,
                             String chunkText,
                             float[] embedding) {
-
-        jdbcTemplate.execute("SHOW client_encoding", (PreparedStatementCallback<Void>) ps -> {
-            try (var rs = ps.executeQuery()) {
-                if (rs.next()) log.info("INSERT conn client_encoding={}", rs.getString(1));
-            }
-            return null;
-        });
-
         String sql = """
                 INSERT INTO legal_chunks(accident_type, doc_name, page, section, case_id, chunk_text, embedding)
                 VALUES (?, ?, ?, ?, ?, ?, ?::vector)
