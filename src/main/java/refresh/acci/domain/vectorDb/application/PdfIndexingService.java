@@ -8,6 +8,12 @@ import refresh.acci.domain.vectorDb.infra.PgVectorChunkRepository;
 import refresh.acci.domain.vectorDb.presentation.dto.res.SectionBlock;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,6 +31,11 @@ public class PdfIndexingService {
     private static final List<String> LAW_HEADERS = List.of("관련 법규", "관련법규", "도로교통법");
     // 판례 헤더
     private static final List<String> PRECEDENT_HEADERS = List.of("참고 판례", "참고판례");
+
+    // UTF-8 인코더 (대체 문자)
+    private static final CharsetEncoder UTF8_ENCODER = StandardCharsets.UTF_8.newEncoder()
+            .onMalformedInput(CodingErrorAction.REPLACE)
+            .onUnmappableCharacter(CodingErrorAction.REPLACE);
 
     /**
      * PDF를 읽어서 페이지별 텍스트를 추출하고,
@@ -244,7 +255,15 @@ public class PdfIndexingService {
 
             sb.append(c);
         }
+        String cleaned = sb.toString();
 
-        return sb.toString();
+        // UTF-8 강제 라운드트립
+        try {
+            ByteBuffer bb = UTF8_ENCODER.encode(CharBuffer.wrap(cleaned));
+            return StandardCharsets.UTF_8.decode(bb).toString();
+        } catch (CharacterCodingException e) {
+            // 오면 fallback
+            return cleaned;
+        }
     }
 }
