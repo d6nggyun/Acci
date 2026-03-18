@@ -23,7 +23,7 @@ public class Law extends BaseTime {
     @Column(name = "law_name", nullable = false)
     private String name;
 
-    @Column(name = "law_content", nullable = false)
+    @Column(name = "law_content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     private Law (UUID analysisId, String name, String content) {

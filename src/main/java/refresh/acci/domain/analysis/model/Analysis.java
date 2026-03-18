@@ -60,10 +60,10 @@ public class Analysis extends BaseTime {
     @Column(name = "accident_status")
     private AnalysisStatus analysisStatus;
 
-    @Column(name = "accident_situation")
+    @Column(name = "accident_situation", columnDefinition = "TEXT")
     private String accidentSituation;
 
-    @Column(name = "accident_explain")
+    @Column(name = "accident_explain", columnDefinition = "TEXT")
     private String accidentExplain;
 
     @Enumerated(EnumType.STRING)
