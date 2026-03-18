@@ -46,17 +46,20 @@ public class GeminiGenerateClient {
         String rawJson = geminiWebClient.post()
                 .uri(uri)
                 .bodyValue(body)
-                .retrieve()
-                .onStatus(s -> s.value() == 429,
-                        r -> Mono.error(new CustomException(ErrorCode.GEMINI_RATE_LIMITED)))
-                .onStatus(s -> s.value() != 429 && (s.is4xxClientError() || s.is5xxServerError()),
-                        r -> r.bodyToMono(String.class).defaultIfEmpty("")
-                                .flatMap(bodyText -> {
-                                    log.error("Gemini API 요청 실패. status: {}, body: {}", r.statusCode(), bodyText);
-                                    return Mono.error(new CustomException(ErrorCode.GEMINI_FAILED));
-                                })
+                .exchangeToMono(resp -> resp.bodyToMono(String.class).defaultIfEmpty("")
+                        .flatMap(respBody -> {
+                            if (resp.statusCode().value() == 429) {
+                                String retryAfter = resp.headers().asHttpHeaders().getFirst("Retry-After");
+                                log.warn("Gemini 429. retryAfter={}, body={}", retryAfter, respBody);
+                                return Mono.error(new CustomException(ErrorCode.GEMINI_RATE_LIMITED));
+                            }
+                            if (resp.statusCode().is4xxClientError() || resp.statusCode().is5xxServerError()) {
+                                log.error("Gemini failed. status={}, body={}", resp.statusCode(), respBody);
+                                return Mono.error(new CustomException(ErrorCode.GEMINI_FAILED));
+                            }
+                            return Mono.just(respBody);
+                        })
                 )
-                .bodyToMono(String.class)
                 .timeout(Duration.ofSeconds(30))
                 .block();
 
