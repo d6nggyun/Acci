@@ -112,7 +112,7 @@ class GetVideoUrlUseCaseTest {
         when(userDetails.getId()).thenReturn(userId);
         when(analysis.getVideoS3Key()).thenReturn(null);
 
-        // when / then
+        // when // then
         assertThatThrownBy(() -> getVideoUrlUseCase.getVideoUrl(analysisId, userDetails))
                 .isInstanceOf(CustomException.class)
                 .extracting("errorCode")
@@ -136,7 +136,7 @@ class GetVideoUrlUseCaseTest {
         when(userDetails.getId()).thenReturn(userId);
         when(analysis.getVideoS3Key()).thenReturn("   ");
 
-        // when / then
+        // when // then
         assertThatThrownBy(() -> getVideoUrlUseCase.getVideoUrl(analysisId, userDetails))
                 .isInstanceOf(CustomException.class)
                 .extracting("errorCode")
