@@ -3,6 +3,7 @@ package refresh.acci.domain.analysis.application.usecase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import refresh.acci.domain.analysis.application.port.out.AnalysisEventPort;
 import refresh.acci.domain.analysis.application.port.out.AnalysisRepositoryPort;
@@ -43,8 +44,10 @@ class AnalysisEventsUseCaseTest {
         // then
         assertThat(result).isEqualTo(emitter);
 
-        verify(analysisRepository).getById(analysisId);
-        verify(analysisEvent).subscribe(analysisId);
-        verify(analysisEvent).sendStatus(analysis);
+        InOrder inOrder = inOrder(analysisRepository, analysisEvent);
+
+        inOrder.verify(analysisRepository).getById(analysisId);
+        inOrder.verify(analysisEvent).subscribe(analysisId);
+        inOrder.verify(analysisEvent).sendStatus(analysis);
     }
 }
