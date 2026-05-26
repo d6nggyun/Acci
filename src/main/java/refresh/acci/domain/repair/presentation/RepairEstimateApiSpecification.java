@@ -33,7 +33,7 @@ public interface RepairEstimateApiSpecification {
     @Operation(
             summary = "수리비 견적 요청",
             description = "차량 정보와 손상 내역을 바탕으로 AI가 수리비 견적을 산출합니다. <br><br>" +
-                    "LLM이 각 부위별 수리 방법과 비용을 분석하여 총 견적을 제공합니다. <br><br>" +
+                    "LLM이 각 부위별 수리 방법과 비용을 분석하여 최소~최대 범위의 견적을 제공합니다. <br><br>" +
                     "이미지는 선택 사항이며, 최대 5장까지 첨부 가능하고 첨부 시 LLM이 이미지를 추가 참고자료로 활용합니다.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
@@ -114,7 +114,7 @@ public interface RepairEstimateApiSpecification {
     @Operation(
             summary = "수리비 견적 조회",
             description = "생성된 수리비 견적의 상세 정보를 조회합니다. <br><br>" +
-                    "차량 정보, 손상 내역, 부위별 수리 항목, 총 견적 금액을 제공합니다.",
+                    "차량 정보, 손상 내역, 부위별 수리 항목, 총 견적 금액 범위(최소~최대)를 제공합니다.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -142,7 +142,7 @@ public interface RepairEstimateApiSpecification {
             summary = "수리비 견적 페이징 조회",
             description = "인증된 사용자의 수리비 견적 기록을 페이징하여 조회합니다. <br><br>" +
                     "최신순으로 정렬되며, 기본 페이지 크기는 5개입니다. <br><br>" +
-                    "요약 정보(견적 ID, 상태, 총 견적 금액, 차량 모델, 손상 요약, 생성일)만 포함되며, " +
+                    "요약 정보(견적 ID, 상태, 총 견적 금액 범위, 차량 모델, 손상 요약, 생성일)만 포함되며, " +
                     "상세 정보는 단건 조회 API를 사용하세요. <br><br>" +
                     "이 API는 인증이 필요하며, HttpOnly 쿠키에 저장된 Access Token이 자동으로 전송됩니다.",
             responses = {

@@ -23,6 +23,10 @@ public class RepairEstimateLlmResponse {
         @JsonProperty("repair_method")
         private String repairMethod;
 
-        private Long cost;
+        @JsonProperty("cost_min")
+        private Long costMin;
+
+        @JsonProperty("cost_max")
+        private Long costMax;
     }
 }

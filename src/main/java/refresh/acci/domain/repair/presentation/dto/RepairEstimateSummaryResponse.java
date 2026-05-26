@@ -15,7 +15,8 @@ import java.util.UUID;
 public class RepairEstimateSummaryResponse {
     private final UUID estimateId;
     private final EstimateStatus estimateStatus;
-    private final Long totalEstimate;
+    private final Long totalEstimateMin;
+    private final Long totalEstimateMax;
     private final String vehicleModel;
     private final String damageSummary;
     private final LocalDateTime createdAt;
@@ -24,7 +25,8 @@ public class RepairEstimateSummaryResponse {
         return RepairEstimateSummaryResponse.builder()
                 .estimateId(estimate.getId())
                 .estimateStatus(estimate.getEstimateStatus())
-                .totalEstimate(estimate.getTotalEstimatedCost())
+                .totalEstimateMin(estimate.getTotalEstimatedCostMin())
+                .totalEstimateMax(estimate.getTotalEstimatedCostMax())
                 .vehicleModel(estimate.getVehicleInfo().getModel())
                 .damageSummary(buildDamageSummary(damageDetails))
                 .createdAt(estimate.getCreatedAt())

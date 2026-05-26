@@ -42,8 +42,11 @@ public class RepairEstimate extends BaseTime {
     @Column(name = "estimate_status", nullable = false)
     private EstimateStatus estimateStatus;
 
-    @Column(name = "total_estimated_cost")
-    private Long totalEstimatedCost;
+    @Column(name = "total_estimated_cost_min")
+    private Long totalEstimatedCostMin;
+
+    @Column(name = "total_estimated_cost_max")
+    private Long totalEstimatedCostMax;
 
     @Builder
     public RepairEstimate(Long userId, VehicleInfo vehicleInfo) {
@@ -71,8 +74,9 @@ public class RepairEstimate extends BaseTime {
         this.estimateStatus = EstimateStatus.PROCESSING;
     }
 
-    public void completeEstimate(Long totalCost) {
-        this.totalEstimatedCost = totalCost;
+    public void completeEstimate(Long totalCostMin, Long totalCostMax) {
+        this.totalEstimatedCostMin = totalCostMin;
+        this.totalEstimatedCostMax = totalCostMax;
         this.estimateStatus = EstimateStatus.COMPLETED;
     }
 

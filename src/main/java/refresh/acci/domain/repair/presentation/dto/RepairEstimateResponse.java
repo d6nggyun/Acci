@@ -20,7 +20,8 @@ public class RepairEstimateResponse {
     private final List<String> images;
     private final List<DamageDetailDto> damageDetails;
     private final List<RepairItemDto> repairItems;
-    private final Long totalEstimate;
+    private final Long totalEstimateMin;
+    private final Long totalEstimateMax;
     private final String status;
     private final LocalDateTime createdAt;
 
@@ -36,7 +37,8 @@ public class RepairEstimateResponse {
                 .repairItems(repairItems.stream()
                         .map(RepairItemDto::from)
                         .toList())
-                .totalEstimate(estimate.getTotalEstimatedCost())
+                .totalEstimateMin(estimate.getTotalEstimatedCostMin())
+                .totalEstimateMax(estimate.getTotalEstimatedCostMax())
                 .status(estimate.getEstimateStatus().name())
                 .createdAt(estimate.getCreatedAt())
                 .build();
@@ -85,13 +87,15 @@ public class RepairEstimateResponse {
     public static class RepairItemDto {
         private final String partName;
         private final String repairMethod;
-        private final Long cost;
+        private final Long costMin;
+        private final Long costMax;
 
         public static RepairItemDto from(RepairItem item) {
             return RepairItemDto.builder()
                     .partName(item.getPartName())
                     .repairMethod(item.getRepairMethod().getDisplayName())
-                    .cost(item.getCost())
+                    .costMin(item.getCostMin())
+                    .costMax(item.getCostMax())
                     .build();
         }
     }
