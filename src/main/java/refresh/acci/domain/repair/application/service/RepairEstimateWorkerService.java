@@ -67,17 +67,23 @@ public class RepairEstimateWorkerService {
         RepairEstimateLlmResponse llmResponse = callLlm(estimate.getVehicleInfo(), damageDetails, imagesData);
         log.info("LLM response repairItems: {}", llmResponse.getRepairItems());
 
+        //LLM 응답 검증
+        validateLlmResponse(llmResponse);
+
         //RepairItem 저장
         saveRepairItems(estimateId, llmResponse.getRepairItems());
 
         //총 금액 계산
-        long totalCost = llmResponse.getRepairItems().stream()
-                .mapToLong(RepairEstimateLlmResponse.RepairItem::getCost)
+        long totalCostMin = llmResponse.getRepairItems().stream()
+                .mapToLong(RepairEstimateLlmResponse.RepairItem::getCostMin)
+                .sum();
+        long totalCostMax = llmResponse.getRepairItems().stream()
+                .mapToLong(RepairEstimateLlmResponse.RepairItem::getCostMax)
                 .sum();
 
         //COMPLETED 상태로 변경
-        estimate.completeEstimate(totalCost);
-        log.info("수리비 견적 처리 완료 - estimateId: {}, totalEstimate: {}", estimateId, totalCost);
+        estimate.completeEstimate(totalCostMin, totalCostMax);
+        log.info("수리비 견적 처리 완료 - estimateId: {}, totalEstimate: {} ~ {}", estimateId, totalCostMin, totalCostMax);
     }
 
     //S3 키 리스트로 이미지 리스트 변환
@@ -140,11 +146,30 @@ public class RepairEstimateWorkerService {
                         estimateId,
                         dto.getPartName(),
                         RepairMethod.from(dto.getRepairMethod()),
-                        dto.getCost()
+                        dto.getCostMin(),
+                        dto.getCostMax()
                 ))
                 .toList();
 
         repairItemRepository.saveAll(repairItems);
+    }
+
+    //LLM 응답 형식 검증 (null / 음수 / cost_min > cost_max)
+    private void validateLlmResponse(RepairEstimateLlmResponse response) {
+        List<RepairEstimateLlmResponse.RepairItem> items = response.getRepairItems();
+        if (items == null || items.isEmpty()) {
+            log.warn("LLM 응답에 repair_items가 비어 있습니다.");
+            throw new CustomException(ErrorCode.LLM_RESPONSE_PARSE_FAILED);
+        }
+
+        for (RepairEstimateLlmResponse.RepairItem item : items) {
+            Long costMin = item.getCostMin();
+            Long costMax = item.getCostMax();
+            if (costMin == null || costMax == null || costMin < 0 || costMax < 0 || costMin > costMax) {
+                log.warn("LLM 응답 금액 검증 실패 - partName: {}, costMin: {}, costMax: {}", item.getPartName(), costMin, costMax);
+                throw new CustomException(ErrorCode.LLM_RESPONSE_PARSE_FAILED);
+            }
+        }
     }
 
     //실패 처리

@@ -51,8 +51,11 @@ public class RepairPromptBuilder {
                 2. 입력된 각 damage_detail에 대해 정확히 1개의 repair_item을 생성하세요.
                 3. part_name은 입력된 한국어 부위명(part_name_kr)을 그대로 사용하세요.
                 4. repair_method는 반드시 다음 중 하나: "replace", "repair", "paint", "repair_and_paint"
-                5. cost는 만원 단위가 아닌 원(₩) 단위 정수로 작성하세요. (예: 45만원 → 450000)
-                6. 차량의 segment(차급)에 해당하는 배율을 적용한 금액을 산출하세요.
+                5. 수리비는 단일 금액이 아닌 최소~최대 범위로 산출하세요.
+                   - 위 가격 가이드라인의 범위를 기준으로 삼되, 손상 상태·연식·이미지를 고려하여 가이드라인 범위 안에서 더 좁은 범위로 산출하세요.
+                   - cost_min, cost_max는 만원 단위가 아닌 원(₩) 단위 정수로 작성하세요. (예: 45만원 → 450000)
+                   - 반드시 cost_min <= cost_max 를 지키세요.
+                6. 차량의 segment(차급)에 해당하는 배율을 cost_min, cost_max 양쪽에 동일하게 적용하세요.
                 
                 응답 JSON 형식:
                 {
@@ -60,7 +63,8 @@ public class RepairPromptBuilder {
                     {
                       "part_name": "부위명 (한국어)",
                       "repair_method": "replace|repair|paint|repair_and_paint",
-                      "cost": 수리비(원 단위 정수)
+                      "cost_min": 최소 수리비(원 단위 정수),
+                      "cost_max": 최대 수리비(원 단위 정수)
                     }
                   ]
                 }
