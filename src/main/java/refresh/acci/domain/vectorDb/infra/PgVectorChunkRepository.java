@@ -46,15 +46,19 @@ public class PgVectorChunkRepository {
     public List<LegalChunkRow> searchTopK(
             Integer accidentTypeFilter,
             float[] queryEmbedding,
-            int topK
+            int topK,
+            double maxDistance
     ) {
         // cosine distance: embedding <=> query (작을수록 유사)
+        // maxDistance 보다 큰(=무관한) 결과는 제외하여, 다른 사고 상황의 청크가
+        // 강제로 top-K 에 섞여 들어오는 것을 방지한다.
         String sql = """
                 SELECT id, accident_type, doc_name, page, section, case_id, chunk_text,
                        (embedding <=> ?::vector) AS distance
                 FROM legal_chunks
                 WHERE embedding IS NOT NULL
                 AND (? IS NULL OR accident_type = ?)
+                AND (embedding <=> ?::vector) < ?
                 ORDER BY embedding <=> ?::vector
                 LIMIT ?
                 """;
@@ -66,6 +70,7 @@ public class PgVectorChunkRepository {
                 rowMapper,
                 qVec,
                 accidentTypeFilter, accidentTypeFilter,
+                qVec, maxDistance,
                 qVec,
                 topK);
     }

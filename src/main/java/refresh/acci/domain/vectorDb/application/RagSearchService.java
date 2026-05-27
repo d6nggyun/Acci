@@ -24,12 +24,17 @@ public class RagSearchService {
     private final PgVectorChunkRepository pgVectorChunkRepository;
     private final GeminiEmbeddingService embeddingService;
 
+    // 코사인 거리(0~2) 기준 최대 허용 임계값.
+    // 너무 멀면 무관한 청크로 간주하여 결과에서 제외 → 다른 사고 상황 누수 방지.
+    // 값은 운영 환경에서 측정 후 조정 필요. 너무 빡빡하면 결과 0건이 될 수 있다.
+    private static final double MAX_DISTANCE = 0.5;
+
     public RagInfoResponse search(Analysis analysis) {
         int type = normalizeForSearch(analysis.getAccidentType());
         String query = buildQueryText(analysis);
         float[] qEmb = embeddingService.embed(query);
 
-        var topK = pgVectorChunkRepository.searchTopK(type, qEmb, 5);
+        var topK = pgVectorChunkRepository.searchTopK(type, qEmb, 5, MAX_DISTANCE);
         var laws = pgVectorChunkRepository.pickLawChunks(type, 3);
         var precedents = pgVectorChunkRepository.pickPrecedentChunks(type, 3);
 
