@@ -10,6 +10,8 @@
 | 담당 | 백엔드: 영상 업로드부터 사고 분석, 결과 반환, RAG 기반 판례/법규 요약까지의 분석 플로우 전 구간 |
 | 비고 | 인천대학교 컴퓨터공학부 캡스톤디자인 대상 |
 
+ <br>
+
 ## 기술 스택
 
 | 영역 | 사용 기술 |
@@ -22,12 +24,16 @@
 | 모니터링 | Actuator, Micrometer, Prometheus, Grafana |
 | Infra | Docker, AWS EC2, S3, Caddy |
 
+ <br>
+
 ## 아키텍처
 
 <img width="2058" height="1218" alt="image" src="https://github.com/user-attachments/assets/ea7714bd-614a-4f04-ba96-781d5e7ba73b" />
 
 Spring Boot 애플리케이션이 AI 서버와 벡터DB(pgvector), S3, MySQL을 각각 어댑터를 통해 호출합니다. <br>
 Caddy를 리버스 프록시로 두고, GitHub Actions로 EC2에 배포합니다.
+
+ <br>
 
 ## 분석 요청 처리 흐름
 
@@ -40,7 +46,7 @@ Caddy를 리버스 프록시로 두고, GitHub Actions로 EC2에 배포합니다
 4. 클라이언트는 Job ID로 SSE 구독, 진행 상태 수신
 5. 완료 시 결과 저장 후 SSE로 전달
 
-<!-- 시퀀스 다이어그램 이미지 -->
+ <br>
 
 ## 문제 해결
 
@@ -66,6 +72,8 @@ k6 + Toxiproxy + WireMock으로 세 가지 시나리오를 측정했습니다. <
 | 완전 장애 (프록시 차단) | CLOSED → OPEN 전환 후 즉시 차단, failed_without_retry 35.4건/분 |
 | 정상 | p99 응답시간 변화 없음 (AOP 데코레이터 오버헤드 측정 불가 수준) |
 
+ <br>
+ 
 ### 2. 외부 LLM 호출로 인한 DB 커넥션 풀 고갈
 
 분석 결과 조회 UseCase 전체가 하나의 `@Transactional`로 묶여 있었고, 그 안에서 Gemini 호출을 `Mono.block()`으로 동기 대기했습니다. <br>
@@ -78,6 +86,8 @@ RAG 수행 중 어떤 예외가 나더라도 진행 상태 락은 해제되도�
 
 커넥션 점유 시간이 최대 30초에서 ms 단위로 줄었고, LLM 지연이 다른 API로 전파되지 않게 됐습니다. <br>
 
+ <br>
+
 ### 3. RAG 동시 요청 중복 수행
 
 같은 analysis를 여러 사용자가 동시에 조회하면 각 요청이 독립적으로 RAG 파이프라인을 돌려서, embedding API 비용이 중복으로 나가고 결과 저장 시 race condition이 생겼습니다. <br>
@@ -87,6 +97,8 @@ RAG 수행 중 어떤 예외가 나더라도 진행 상태 락은 해제되도�
 CAS 기반 업데이트로 NONE에서만 IN_PROGRESS 전환이 가능하게 해서 단 하나의 요청만 실제 수행 권한을 갖도록 했고, 나머지는 DB polling이나 저장된 결과 재사용으로 처리했습니다. <br>
 
 동일 analysis에 대한 RAG 연산이 한 번만 수행되고, race condition도 사라졌습니다. <br>
+
+ <br>
 
 ### 4. LLM 환각을 막기 위한 pgvector RAG 파이프라인
 
@@ -101,6 +113,8 @@ CAS 기반 업데이트로 NONE에서만 IN_PROGRESS 전환이 가능하게 해�
 
 문서 근거가 붙으면서 환각 응답을 차단했고, 선택적 인덱싱으로 embedding 호출 비용과 처리 시간을 줄였습니다. <br>
 
+ <br>
+
 ### 5. Hexagonal Architecture로 외부 의존성 분리
 
 AI 서버, pgvector, MySQL 같은 인프라 의존성이 서비스 로직과 직접 붙어 있었습니다. <br>
@@ -112,6 +126,8 @@ Service 계층이 WebClient와 JPA Repository, 외부 SDK를 그대로 참조하
 
 Mock Adapter로 단위 테스트를 작성할 수 있게 됐고, 벡터DB나 LLM Provider 교체가 어댑터 수준에서 끝나게 됐습니다. <br>
 
+ <br>
+
 ## 부하 테스트 / 모니터링
 
 `load-test/`에 k6 시나리오와 Toxiproxy, WireMock 구성이 있습니다.
@@ -122,17 +138,7 @@ docker compose -f docker-compose.load-test.yml up
 
 `monitoring/`에 Prometheus와 Grafana 설정이 있습니다.
 
-<!-- Grafana 대시보드 스크린샷 1장 -->
-
-## 실행
-
-```bash
-git clone https://github.com/d6nggyun/Acci.git
-cd Acci
-cp .env.example .env   # 값 채우기
-docker compose up -d
-./gradlew bootRun
-```
+ <br>
 
 ## 화면
 
